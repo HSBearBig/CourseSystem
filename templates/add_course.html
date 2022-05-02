@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div style="margin: 3%;">
+    <form action="/add_course/" method="post">
+        <div style="margin: auto 10px;">
+            <select name="course" class="form-select" style="width: 30%; margin: auto;">
+                <option value="none" disabled selected>請選擇課程</option>
+                {% for key, value in results.items() %}
+                <option value="{{ key }}">{{ key }}: {{ value[0] }} - {{ ', '.join(value[1]) }} ( {{ value[2] }} / {{ value[3] }} )</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div style="text-align: center; margin: 10px;">
+            <button type="submit" class="btn btn-primary">送出</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

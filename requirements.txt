@@ -1,0 +1,4 @@
+flask
+mysqlclient
+python-dotenv
+bcrypt

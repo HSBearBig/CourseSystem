@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="modal fade" id="CheckTypeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">確定退選必修課？</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="Modal_OK">確定</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="content" style="margin: 10px">
+    <table class="table table-bordered" style="border: 3px #cccccc solid; text-align: center; width: 50%; margin: auto; vertical-align: middle;">
+        <thead>
+            <tr>
+                <th style="width: 100px"></th>
+                <th style="width: 100px">選課代碼</th>
+                <th style="width: 100px">課程名稱</th>
+                <th style="width: 100px">學分</th>
+                <th style="width: 100px">必/選修</th>
+                <th style="width: 100px">授課老師</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {% for key, value in results.items() %}
+            <tr id="{{ key }}">
+                <td>
+                    <form id="del_course_form" action="/del_course/" method="post" style="vertical-align: middle; margin: 5px 0px;">
+                        <input type="hidden" name="studentID" value="{{ student }}">
+                        <input type="hidden" name="del_sectionID" value="{{ key }}">
+                        <button id="del_course_button" type="button" class="btn btn-danger"
+                            value="{{ key }}">退選</button>
+                    </form>
+                </td>
+                <td>{{ key }}</td>
+                <td>{{ value[0] }}</td>
+                <td>{{ value[1] }}</td>
+                <td>{{ value[2] }}</td>
+                <td>{{ ', '.join(value[3]) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% set time = ["8:10 ~ 9:00", "9:10 ~ 10:00", "10:10 ~ 11:00", "11:10 ~ 12:00", "12:10 ~ 13:00", "13:10 ~ 14:00", "14:10
+~ 15:00", "15:10 ~ 16:00", "16:10 ~ 17:00", "17:10 ~ 18:00", "18:30 ~ 19:20", "19:25 ~ 20:15", "20:25 ~ 21:15", "21:20 ~
+22:10"] %}
+<div class="content" style="margin: 10px">
+    <div class="total_credit" style="text-align: center;">
+        <p>學分：{{ total_credit }}</p>
+    </div>
+    <table class="table table-bordered" style="border: 3px #cccccc solid; text-align: center; margin: auto; width: 80%; vertical-align: middle;">
+        <thead>
+            <tr>
+                <th style="width: 250px"></th>
+                <th style="width: 250px">一</th>
+                <th style="width: 250px">二</th>
+                <th style="width: 250px">三</th>
+                <th style="width: 250px">四</th>
+                <th style="width: 250px">五</th>
+                <th style="width: 250px">六</th>
+                <th style="width: 250px">日</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in courseTable %}
+            <tr>
+                <td>{{ loop.index }}<br />{{ time[loop.index0] }}</td>
+                {% for day in session %}
+                <td>{{ day }}</td>
+                {% endfor %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        $(document).on('click', '#del_course_button', function (event) {
+            var CheckTypeModal = new bootstrap.Modal(document.getElementById('CheckTypeModal'));
+            var del_section_id = $(this).val();
+            var del_section = document.getElementById(del_section_id);
+            var CourseType = del_section.getElementsByTagName("td")[4].innerText;
+            if (CourseType == "必") {
+                CheckTypeModal.show();
+                $('#CheckTypeModal').on('click', '#Modal_OK', function(e) {
+                    CheckTypeModal.hide();
+                    $(`#${del_section_id} #del_course_form`).submit();
+                });
+            } else {
+                $(`#${del_section_id} #del_course_form`).submit();
+            }
+        });
+    });
+</script>
+{% endblock %}
